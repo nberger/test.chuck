@@ -1,7 +1,6 @@
-(ns com.gfredericks.test.chuck.properties
+(ns com.gfredericks.test.chuck.properties.macros
   "Alternative to clojure.test.check.properties."
   (:require [com.gfredericks.test.chuck.properties.impl :refer [for-bindings]]
-            [clojure.test.check.properties :as prop]
             [com.gfredericks.test.chuck.generators :as gen']))
 
 (defmacro for-all
@@ -11,7 +10,7 @@
   [bindings expr]
   (let [bound-names (for-bindings bindings)
         quoted-names (map #(list 'quote %) bound-names)]
-    `(prop/for-all [{:syms [~@bound-names]}
+    `(~'cljs.test.check.properties/for-all [{:syms [~@bound-names]}
                     (gen'/for ~bindings
                       (with-meta
                         ~(zipmap quoted-names bound-names)

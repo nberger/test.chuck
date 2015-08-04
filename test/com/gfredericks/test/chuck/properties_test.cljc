@@ -1,5 +1,5 @@
 (ns com.gfredericks.test.chuck.properties-test
-  #?(:cljs (:require-macros [com.gfredericks.test.chuck.properties :as prop']
+  #?(:cljs (:require-macros [com.gfredericks.test.chuck.properties.macros :as prop']
                             [com.gfredericks.test.chuck.generators :as gen']))
   #?(:clj  (:require [clojure.test :refer :all]
                      [clojure.test.check :as t.c]
@@ -17,19 +17,13 @@
    (instance? #?(:clj Throwable :cljs js/Error)
               (:result
                (t.c/quick-check 100
-                 #?(
-                 :clj
                  (prop'/for-all [x gen/int]
-                   (/ 4 0))
-
-                 :cljs 
-                 (prop'/for-all-cljs [x gen/int]
-                   (js/Error. "Oops"))))))))
+                   #?(:clj  (/ 4 0)
+                      :cljs (js/Error. "Oops"))))))))
 
 (deftest reported-args-test
-  (let [p (#?(:clj  prop'/for-all
-              :cljs prop'/for-all-cljs) [x gen/nat]
-              (not (<= 0 x 10)))
+  (let [p (prop'/for-all [x gen/nat]
+            (not (<= 0 x 10)))
         {:keys [fail]} (t.c/quick-check 1000 p)]
     (is (= 1 (count fail)))
     (let [[m] fail]
@@ -37,10 +31,8 @@
       (is (<= 0 (get m 'x) 10)))))
 
 (defspec for-all-destructured-args-work-correctly 10
-  (#?(:clj prop'/for-all :cljs prop'/for-all-cljs) [[a b] (gen/tuple gen/int gen/int)]
-                 (+ a b)))
-
-
+  (prop'/for-all [[a b] (gen/tuple gen/int gen/int)]
+    (+ a b)))
 
 
 
