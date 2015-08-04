@@ -11,16 +11,19 @@
                    [[org.clojure/test.check "0.7.0"]]}}
   :plugins [[lein-cljsbuild "1.0.6"]]
 
+  :clean-targets ^{:protect false} ["resources/tests.js" "resources/out"]
   :cljsbuild
   {:builds
    [{:id "dev"
      :source-paths ["src" "test"]
+     :notify-command ["node" "resources/tests.js"]
      :compiler {:optimizations :none
                 :output-to "resources/tests.js"
                 :output-dir "resources/out-dev"
                 :source-map true}}
     {:id "adv"
      :source-paths ["src" "test"]
+     :notify-command ["node" "resources/tests.js"]
      :compiler {:optimizations :advanced
                 :output-to "resources/tests.js"
                 :output-dir "resources/out-adv"}}]}
