@@ -1,12 +1,16 @@
 (ns com.gfredericks.test.chuck.generators
   "Yes this namespace's name has five components."
   (:refer-clojure :exclude [double for partition])
-  (:require [clojure.core :as core]
-            [clojure.test.check.generators :as gen]
-            [com.gfredericks.test.chuck.regexes :as regexes]))
+  #?(:cljs (:require-macros [com.gfredericks.test.chuck.generators :refer [for]]))
+  (:require #?@(:clj  [[clojure.core :as core]
+                       [clojure.test.check.generators :as gen]
+                       [com.gfredericks.test.chuck.regexes :as regexes]]
+                :cljs [[cljs.core :as core]
+                       [cljs.test.check.generators :as gen]])))
 
 ;; Hoping this will be in test.check proper:
 ;; http://dev.clojure.org/jira/browse/TCHECK-15
+#?(:clj
 (defmacro for
   "Like clojure.core/for, but builds up a generator using bind, fmap,
   and such-that. The right half of each binding pair is a generator,
@@ -78,7 +82,8 @@
               (let [pairs (core/partition 2 v1)
                     names (map first pairs)
                     gens (map second pairs)]
-                `(for [[~@names] (gen/tuple ~@gens)
+                `(for [[~@names]
+                       (~'gen/tuple ~@gens)
                        ~@more]
                    ~expr)))
 
@@ -86,7 +91,7 @@
           ;; special case to avoid extra call to fmap
           (if (and (symbol? k1) (= k1 expr))
             v1
-            `(gen/fmap (fn [~k1] ~expr) ~v1))
+            `(~'gen/fmap (fn [~k1] ~expr) ~v1))
 
           (= k2 :let)
           ;; This part is complex because we need to watch out for
@@ -118,25 +123,25 @@
                                xs)))
                     [lettings bindings values]))
                 k1' (apply vector k1 bindings)
-                v1' `(gen/fmap (fn [arg#]
-                                 (let [~k1 arg#
-                                       ~@lettings]
-                                   [arg# ~@values]))
-                               ~v1)]
+                v1' `(~'gen/fmap (fn [arg#]
+                                   (let [~k1 arg#
+                                         ~@lettings]
+                                     [arg# ~@values]))
+                         ~v1)]
             `(for [~k1' ~v1' ~@even-more] ~expr))
 
           (= k2 :when)
           (let [max-tries-meta (-> v2 meta :max-tries)
                 max-tries-arg (if max-tries-meta
                                 [max-tries-meta])
-                v1' `(gen/such-that (fn [~k1] ~v2) ~v1 ~@max-tries-arg)]
+                v1' `(~'gen/such-that (fn [~k1] ~v2) ~v1 ~@max-tries-arg)]
             `(for [~k1 ~v1' ~@even-more] ~expr))
 
           ((some-fn symbol? vector? map? #{:parallel}) k2)
-          `(gen/bind ~v1 (fn [~k1] (for ~more ~expr)))
+          `(~'gen/bind ~v1 (fn [~k1] (for ~more ~expr)))
 
           :else
-          (throw (ex-info "Unsupported binding form in gen/for!" {:form k2})))))
+          (throw (ex-info "Unsupported binding form in gen/for!" {:form k2}))))))
 
 (defn subsequence
   "Given a collection, generates \"subsequences\" which are sequences
@@ -144,7 +149,8 @@
   collection, in the same order. For collections of distinct elements
   this is effectively a subset generator, with an ordering guarantee."
   [elements]
-  (for [bools (apply gen/tuple (repeat (count elements) gen/boolean))]
+  (for [bools (apply gen/tuple
+                     (repeat (count elements) gen/boolean))]
     (->> (map list bools elements)
          (filter first)
          (map second))))
@@ -216,6 +222,7 @@
                        (< high high')
                        (gen/choose (- high range-size) high))))))
 
+#?(:clj
 (def double
   "Generates a Double, which can include Infinity and -Infinity
   but not NaN."
@@ -225,8 +232,9 @@
    (gen/tuple
     (let [bignumber (apply * (repeat 52 2))]
       (bounded-int (- bignumber) bignumber))
-    (bounded-int -1022 1023))))
+    (bounded-int -1022 1023)))))
 
+#?(:clj
 (defn string-from-regex
   "Given a regular expression, returns a generator that generates
   strings matching that regular expression.
@@ -238,7 +246,7 @@
   helpful exceptions if it is called with a regular expression using
   any of those features."
   [regex]
-  (regexes/gen-string-from-regex regex))
+  (regexes/gen-string-from-regex regex)))
 
 (defn sub-map
   "Given a concrete map, it'll randomly select keys
