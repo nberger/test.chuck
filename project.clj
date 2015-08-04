@@ -3,11 +3,28 @@
   :url "https://github.com/fredericksgary/test.chuck"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
-  :dependencies [[org.clojure/clojure "1.6.0"]
+  :dependencies [[org.clojure/clojure "1.7.0"]
+                 [org.clojure/clojurescript "0.0-3308"]
                  [instaparse "1.3.6"]]
   :deploy-repositories [["releases" :clojars]]
   :profiles {:dev {:dependencies
                    [[org.clojure/test.check "0.7.0"]]}}
+  :plugins [[lein-cljsbuild "1.0.6"]]
+
+  :cljsbuild
+  {:builds
+   [{:id "dev"
+     :source-paths ["src" "test"]
+     :compiler {:optimizations :none
+                :output-to "resources/tests.js"
+                :output-dir "resources/out-dev"
+                :source-map true}}
+    {:id "adv"
+     :source-paths ["src" "test"]
+     :compiler {:optimizations :advanced
+                :output-to "resources/tests.js"
+                :output-dir "resources/out-adv"}}]}
+
   :aliases {"test-all"
             ^{:doc "Runs tests on multiple JVMs; profiles java-7
                     and java-8 should be defined outside this project."}
