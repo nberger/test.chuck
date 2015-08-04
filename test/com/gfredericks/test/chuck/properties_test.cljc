@@ -14,7 +14,8 @@
 
 (deftest it-handles-exceptions-correctly
   (is
-   (instance? #?(:clj Throwable :cljs js/Error)
+   (instance? #?(:clj  Throwable
+                 :cljs js/Error)
               (:result
                (t.c/quick-check 100
                  (prop'/for-all [x gen/int]
