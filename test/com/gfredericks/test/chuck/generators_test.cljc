@@ -1,5 +1,4 @@
 (ns com.gfredericks.test.chuck.generators-test
-  #?(:cljs (:require-macros [com.gfredericks.test.chuck.generators]))
   (:require #?@(:clj  [[clojure.test.check.clojure-test :refer [defspec]]
                        [clojure.test.check.generators :as gen]
                        [clojure.test.check.properties :as prop]
@@ -9,7 +8,7 @@
                        [cljs.test :refer-macros [run-tests]]
                        [cljs.test.check.generators :as gen]
                        [cljs.test.check.properties :as prop :include-macros true]
-                       [com.gfredericks.test.chuck.generators :as gen']])))
+                       [com.gfredericks.test.chuck.generators :as gen' :include-macros true]])))
 
 #?(:cljs
 (defn js-print [& args]
@@ -21,7 +20,7 @@
 
 
 (def lists-and-counts
-  (com.gfredericks.test.chuck.generators/for [nums (gen/vector gen/nat)
+  (gen'/for [nums (gen/vector gen/nat)
              :let [cardinality (count nums)]]
     [nums cardinality]))
 
@@ -30,7 +29,7 @@
     (= (count nums) cardinality)))
 
 (def lists-with-two-of-their-elements
-  (com.gfredericks.test.chuck.generators/for [nums (gen/vector gen/nat)
+  (gen'/for [nums (gen/vector gen/nat)
              :let [cardinality (count nums)]
              :when (> cardinality 1)
              x (gen/elements nums)
@@ -47,7 +46,7 @@
           (and (not= x y) (pos? (f x)) (pos? (f y)))))))
 
 (def destructuring-usage
-  (com.gfredericks.test.chuck.generators/for [{:keys [foo]} (gen/hash-map :foo gen/nat)
+  (gen'/for [{:keys [foo]} (gen/hash-map :foo gen/nat)
              :let [unused-binding 42]
              vs (gen/vector gen/boolean foo)]
     [foo vs]))
@@ -57,7 +56,7 @@
     (= n (count vs))))
 
 (def parallel-usage
-  (com.gfredericks.test.chuck.generators/for [:parallel [x gen/nat
+  (gen'/for [:parallel [x gen/nat
                         y gen/boolean]]
     [x y]))
 
@@ -67,7 +66,7 @@
          (or (= true y) (= false y)))))
 
 (def parallel-as-second-clause
-  (com.gfredericks.test.chuck.generators/for [n gen/nat
+  (gen'/for [n gen/nat
              :parallel [v1 (gen/vector gen/boolean n)
                         v2 (gen/vector gen/boolean n)]]
     [n (concat v1 v2)]))
@@ -107,7 +106,7 @@
            (subsequence? xs (rest ys)))))
 
 (def subsequence-gen
-  (com.gfredericks.test.chuck.generators/for [ys (gen/list gen/nat)
+  (gen'/for [ys (gen/list gen/nat)
              xs (gen'/subsequence ys)]
     [xs ys]))
 
@@ -116,7 +115,7 @@
     (subsequence? xs ys)))
 
 (def sub-map-gen
-  (com.gfredericks.test.chuck.generators/for [m (gen/map gen/string-alphanumeric gen/nat)
+  (gen'/for [m (gen/map gen/string-alphanumeric gen/nat)
              sm (gen'/sub-map m)]
     [m sm]))
 
