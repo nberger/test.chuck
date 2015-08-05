@@ -2,7 +2,7 @@
   #?(:clj  (:require [clojure.test :refer :all]
                      [clojure.test.check :refer [quick-check]]
                      [clojure.test.check.generators :as gen]
-                     [com.gfredericks.test.chuck.clojure-test :refer :all])
+                     [com.gfredericks.test.chuck.clojure-test :refer [checking for-all]])
      :cljs (:require [cljs.test :refer-macros [deftest is testing run-tests]]
                      [cljs.test.check :refer [quick-check]]
                      [com.gfredericks.test.chuck.cljs-test :refer-macros [checking for-all]]
