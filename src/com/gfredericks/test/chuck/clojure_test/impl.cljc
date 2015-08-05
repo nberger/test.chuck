@@ -14,20 +14,6 @@
                                 :cljs js/Error)
                              value))))
 
-(def ^:dynamic *chuck-captured-reports*)
-
-#?(:cljs
-(defmethod cljs.test/report [::chuck-capture :fail]
-  [m]
-  (println "aa" m)
-  (swap! *chuck-captured-reports* conj m)))
-
-#?(:cljs
-(defmethod cljs.test/report [::chuck-capture :pass]
-  [m]
-
-  (swap! *chuck-captured-reports* conj m)))
-
 (defn report-when-failing [result]
   (is (not-falsey-or-exception? (:result result)) result))
 
