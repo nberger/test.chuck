@@ -28,7 +28,12 @@
                 :output-to "resources/tests.js"
                 :output-dir "resources/out-adv"}}]}
 
-  :aliases {"test-all"
+  :aliases {"test" ["test"
+                    "com.gfredericks.test.chuck.clojure-test-test"
+                    "com.gfredericks.test.chuck.generators-test"
+                    "com.gfredericks.test.chuck.properties-test"
+                    "com.gfredericks.test.chuck.regexes-test"]
+            "test-all"
             ^{:doc "Runs tests on multiple JVMs; profiles java-7
                     and java-8 should be defined outside this project."}
             ["do"
