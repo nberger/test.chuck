@@ -23,7 +23,8 @@
       (swap! c inc)
       (is (> @c 0)))))
 
-(comment (deftest exception-detection-test
+#?(:clj
+(deftest exception-detection-test
   (eval '(do (ns fake.test.namespace
                (:require [clojure.test :refer :all]
                          [clojure.test.check.generators :as gen]
