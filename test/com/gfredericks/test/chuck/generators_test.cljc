@@ -86,10 +86,11 @@
     (prop/for-all [[low high n] g]
       (<= low n high))))
 
-#?(:clj
+; TODO: improve the cljs tests for gen'/double
 (defspec double-generates-doubles 100
   (prop/for-all [x gen'/double]
-    (instance? Double x))))
+    #?(:clj  (instance? Double x)
+       :cljs (= js/Number (type x)))))
 
 (defspec subset-in-set 100
   (prop/for-all [s (gen'/subset (range 10))]

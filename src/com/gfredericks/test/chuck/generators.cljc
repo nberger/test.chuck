@@ -222,17 +222,22 @@
                        (< high high')
                        (gen/choose (- high range-size) high))))))
 
-#?(:clj
+(defn ^:private scalb
+  [x exp]
+  #?(:clj  (Math/scalb x exp)
+     :cljs (do
+             (* x (.pow js/Math 2 exp)))))
+
 (def double
   "Generates a Double, which can include Infinity and -Infinity
   but not NaN."
   (gen/fmap
    (fn [[signed-significand exp]]
-     (Math/scalb (core/double signed-significand) (core/int exp)))
+     (scalb (core/double signed-significand) (core/int exp)))
    (gen/tuple
     (let [bignumber (apply * (repeat 52 2))]
       (bounded-int (- bignumber) bignumber))
-    (bounded-int -1022 1023)))))
+    (bounded-int -1022 1023))))
 
 #?(:clj
 (defn string-from-regex
