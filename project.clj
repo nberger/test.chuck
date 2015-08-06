@@ -11,7 +11,7 @@
                    [[org.clojure/test.check "0.7.0"]]}}
   :plugins [[lein-cljsbuild "1.0.6"]]
 
-  :clean-targets ^{:protect false} ["resources/tests.js" "resources/out"]
+  :clean-targets ^{:protect false} ["resources/tests.js" "resources/out-adv" "resources/out-dev"]
   :cljsbuild
   {:builds
    [{:id "dev"
