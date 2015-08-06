@@ -3,7 +3,7 @@
                      [clojure.test.check :refer [quick-check]]
                      [clojure.test.check.generators :as gen]
                      [com.gfredericks.test.chuck.clojure-test :refer [checking for-all]])
-     :cljs (:require [cljs.test :refer-macros [deftest is testing run-tests]]
+     :cljs (:require [cljs.test :refer-macros [deftest is run-tests]]
                      [cljs.test.check :refer [quick-check]]
                      [com.gfredericks.test.chuck.cljs-test :refer-macros [checking for-all]]
                      [cljs.test.check.generators :as gen])))
@@ -23,25 +23,6 @@
       (swap! c inc)
       (is (> @c 0)))))
 
-#?(:clj
-(deftest exception-detection-test
-  (eval '(do (ns fake.test.namespace
-               (:require [clojure.test :refer :all]
-                         [clojure.test.check.generators :as gen]
-                         [com.gfredericks.test.chuck.clojure-test :refer :all]))
-             (deftest this-test-should-crash
-               (checking "you can divide four by numbers" 100 [i gen/pos-int]
-                 ;; going for uncaught-error-not-in-assertion here
-                 (let [n (/ 4 i)]
-                   (is n))))))
-  (let [test-results
-        (binding [clojure.test/*test-out* (java.io.StringWriter.)]
-          (clojure.test/run-tests (the-ns 'fake.test.namespace)))]
-    ;; should this be reported as an error for sure?
-    (is (= 1 (+ (:error test-results)
-                (:fail test-results)))))
-  (remove-ns 'fake.test.namespace)))
-
 (deftest for-all-test
   (let [passing-prop (for-all [x gen/s-pos-int]
                        (is (< x (+ x x))))]
@@ -53,7 +34,6 @@
                        (is (zero? x))
                        (is (= x x)))]
     (is (not (:result (quick-check 20 failing-prop))))))
-
 
 
 #?(:cljs
