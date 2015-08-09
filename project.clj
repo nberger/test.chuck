@@ -9,24 +9,24 @@
   :deploy-repositories [["releases" :clojars]]
   :profiles {:dev {:dependencies
                    [[org.clojure/test.check "0.7.0"]]}}
-  :plugins [[lein-cljsbuild "1.0.6"]]
+  :plugins [[lein-cljsbuild "1.0.6"]
+            [lein-doo "0.1.4-SNAPSHOT"]]
 
-  :clean-targets ^{:protect false} ["resources/tests.js" "resources/out-adv" "resources/out-dev"]
   :cljsbuild
   {:builds
-   [{:id "dev"
+   [{:id "node-test"
      :source-paths ["src" "test"]
-     :notify-command ["node" "resources/tests.js"]
-     :compiler {:optimizations :none
-                :output-to "resources/tests.js"
-                :output-dir "resources/out-dev"
-                :source-map true}}
-    {:id "adv"
+     :compiler {:output-to "target/tests.js"
+                :output-dir "target/node"
+                :main 'com.gfredericks.test.chuck.runner
+                :optimizations :none
+                :hashbang false
+                :target :nodejs}}
+    {:id "test"
      :source-paths ["src" "test"]
-     :notify-command ["node" "resources/tests.js"]
-     :compiler {:optimizations :advanced
-                :output-to "resources/tests.js"
-                :output-dir "resources/out-adv"}}]}
+     :compiler {:output-to "target/tests.js"
+                :main 'com.gfredericks.test.chuck.runner
+                :optimizations :none}}]}
 
   :aliases {"test-all"
             ^{:doc "Runs tests on multiple JVMs; profiles java-7

@@ -5,19 +5,9 @@
                        [com.gfredericks.test.chuck.generators :as gen']]
                 :cljs [[cljs.test.check.cljs-test :refer-macros [defspec]]
                        [cljs.test.check]
-                       [cljs.test :refer-macros [run-tests]]
                        [cljs.test.check.generators :as gen]
                        [cljs.test.check.properties :as prop :include-macros true]
                        [com.gfredericks.test.chuck.generators :as gen' :include-macros true]])))
-
-#?(:cljs
-(defn js-print [& args]
-  (if (js* "typeof console != 'undefined'")
-    (.log js/console (apply str args))
-    (js/print (apply str args)))))
-
-#?(:cljs (set! *print-fn* js-print))
-
 
 (def lists-and-counts
   (gen'/for [nums (gen/vector gen/nat)
@@ -125,5 +115,3 @@
     (every? #(= (find m (key %))
                 %)
             sm)))
-
-#?(:cljs (run-tests))

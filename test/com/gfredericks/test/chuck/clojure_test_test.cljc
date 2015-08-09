@@ -3,7 +3,7 @@
                      [clojure.test.check :refer [quick-check]]
                      [clojure.test.check.generators :as gen]
                      [com.gfredericks.test.chuck.clojure-test :refer [checking for-all]])
-     :cljs (:require [cljs.test :refer-macros [deftest is run-tests]]
+     :cljs (:require [cljs.test :refer-macros [deftest is]]
                      [cljs.test.check :refer [quick-check]]
                      [com.gfredericks.test.chuck.cljs-test :refer-macros [checking for-all]]
                      [cljs.test.check.generators :as gen])))
@@ -34,14 +34,3 @@
                        (is (zero? x))
                        (is (= x x)))]
     (is (not (:result (quick-check 20 failing-prop))))))
-
-
-#?(:cljs
-(defn js-print [& args]
-  (if (js* "typeof console != 'undefined'")
-    (.log js/console (apply str args))
-    (js/print (apply str args)))))
-
-#?(:cljs (set! *print-fn* js-print))
-
-#?(:cljs (run-tests))

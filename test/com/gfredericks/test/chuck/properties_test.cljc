@@ -6,7 +6,7 @@
                      [clojure.test.check.generators :as gen]
                      [clojure.test.check.clojure-test :refer [defspec]]
                      [com.gfredericks.test.chuck.properties :as prop'])
-     :cljs (:require [cljs.test :refer-macros [run-tests deftest is]]
+     :cljs (:require [cljs.test :refer-macros [deftest is]]
                      [cljs.test.check :as t.c]
                      [cljs.test.check.generators :as gen]
                      [cljs.test.check.properties :include-macros true]
@@ -34,16 +34,3 @@
 (defspec for-all-destructured-args-work-correctly 10
   (prop'/for-all [[a b] (gen/tuple gen/int gen/int)]
     (+ a b)))
-
-
-
-
-#?(:cljs
-(defn js-print [& args]
-  (if (js* "typeof console != 'undefined'")
-    (.log js/console (apply str args))
-    (js/print (apply str args)))))
-
-#?(:cljs (set! *print-fn* js-print))
-
-#?(:cljs (run-tests))
