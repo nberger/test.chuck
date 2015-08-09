@@ -82,8 +82,7 @@
               (let [pairs (core/partition 2 v1)
                     names (map first pairs)
                     gens (map second pairs)]
-                `(for [[~@names]
-                       (~'gen/tuple ~@gens)
+                `(for [[~@names] (~'gen/tuple ~@gens)
                        ~@more]
                    ~expr)))
 
@@ -149,8 +148,7 @@
   collection, in the same order. For collections of distinct elements
   this is effectively a subset generator, with an ordering guarantee."
   [elements]
-  (for [bools (apply gen/tuple
-                     (repeat (count elements) gen/boolean))]
+  (for [bools (apply gen/tuple (repeat (count elements) gen/boolean))]
     (->> (map list bools elements)
          (filter first)
          (map second))))
