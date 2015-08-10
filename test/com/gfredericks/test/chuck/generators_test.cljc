@@ -1,7 +1,6 @@
 (ns com.gfredericks.test.chuck.generators-test
   (:require [clojure.test.check.clojure-test
              #?(:clj :refer :cljs :refer-macros) [defspec]]
-            #?(:cljs [clojure.test.check])
             [clojure.test.check.generators :as gen]
             [clojure.test.check.properties :as prop]
             [com.gfredericks.test.chuck.generators :as gen'

@@ -1,11 +1,9 @@
 (ns com.gfredericks.test.chuck.clojure-test
-  #?(:clj  (:require [clojure.test.check :as tc]
-                     [clojure.test :refer :all]
-                     [clojure.test.check.properties :as prop]
-                     [com.gfredericks.test.chuck.clojure-test.impl :refer :all])
-     :cljs (:require [com.gfredericks.test.chuck.clojure-test.impl
-                      :refer [pass? report-when-failing save-to-final-reports]]
-                     [clojure.test.check.properties :include-macros true])))
+  (:require [clojure.test.check :as tc]
+            [clojure.test.check.properties :as prop
+             #?@(:cljs [:include-macros true])]
+            [com.gfredericks.test.chuck.clojure-test.impl
+             :refer [pass? report-when-failing save-to-final-reports]]))
 
 (def ^:dynamic *chuck-captured-reports*)
 
