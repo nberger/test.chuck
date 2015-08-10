@@ -53,17 +53,17 @@
        (doseq [r# @final-reports#]
          (cljs.test/report r#)))) 
 
-   (testing ~name
+   (clojure.test/testing ~name
      (let [final-reports# (atom [])]
        (report-when-failing (tc/quick-check ~tests
                               (prop/for-all ~bindings
                                 (let [reports# (atom [])]
-                                  (binding [report #(swap! reports# conj %)]
+                                  (binding [clojure.test/report #(swap! reports# conj %)]
                                     ~@body)
                                   (swap! final-reports# save-to-final-reports @reports#)
                                   (pass? @reports#)))))
        (doseq [r# @final-reports#]
-         (report r#))))))
+         (clojure.test/report r#))))))
 
 (defmacro for-all
   "An alternative to clojure.test.check.properties/for-all that uses
@@ -82,6 +82,6 @@
 
    (prop/for-all ~bindings
      (let [reports# (atom [])]
-       (binding [report #(swap! reports# conj %)]
+       (binding [clojure.test/report #(swap! reports# conj %)]
          ~@body)
        (pass? @reports#)))))
