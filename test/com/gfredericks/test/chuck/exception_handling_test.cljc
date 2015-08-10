@@ -3,7 +3,7 @@
                      [clojure.test.check.generators :as gen]
                      [com.gfredericks.test.chuck.clojure-test :refer [checking]])
      :cljs (:require [cljs.test :as test :refer [test-var *current-env*]
-                      :refer-macros [is testing deftest run-tests]]
+                      :refer-macros [is testing deftest]]
                      [cljs.test.check.generators :as gen]
                      [com.gfredericks.test.chuck.cljs-test :refer-macros [checking]])))
 
@@ -38,14 +38,3 @@
 
 (defn test-ns-hook []
   (test-var #'exception-detection-test))
-
-
-#?(:cljs
-(defn js-print [& args]
-  (if (js* "typeof console != 'undefined'")
-    (.log js/console (apply str args))
-    (js/print (apply str args)))))
-
-#?(:cljs (set! *print-fn* js-print))
-
-#?(:cljs (run-tests))
