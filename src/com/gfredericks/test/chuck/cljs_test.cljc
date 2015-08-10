@@ -1,7 +1,7 @@
 (ns com.gfredericks.test.chuck.cljs-test
   (:require [com.gfredericks.test.chuck.clojure-test.impl
              :refer [pass? report-when-failing save-to-final-reports]]
-            #?(:cljs [cljs.test.check.properties :include-macros true])))
+            #?(:cljs [clojure.test.check.properties :include-macros true])))
 
 (def ^:dynamic *chuck-captured-reports*)
 
@@ -34,9 +34,9 @@
   `(cljs.test/testing ~name
      (let [final-reports# (atom [])]
        (report-when-failing
-         (cljs.test.check/quick-check
+         (clojure.test.check/quick-check
            ~tests
-           (cljs.test.check.properties/for-all ~bindings
+           (clojure.test.check.properties/for-all ~bindings
              (let [reports# (capture-reports ~@body)]
                (swap! final-reports# save-to-final-reports reports#)
                (pass? reports#)))))
@@ -49,6 +49,6 @@
   clojure.test-style assertions (i.e., clojure.test/is) rather than
   the truthiness of the body expression."
   [bindings & body]
-  `(cljs.test.check.properties/for-all
+  `(clojure.test.check.properties/for-all
      ~bindings
      (pass? (capture-reports ~@body)))))

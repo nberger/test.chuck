@@ -1,7 +1,8 @@
-(ns com.gfredericks.test.chuck.properties.impl
+(ns com.gfredericks.test.chuck.properties
+  "Alternative to clojure.test.check.properties."
   (:require [clojure.set :as sets]
-            [clojure.test.check.generators :as gen]
-            [clojure.test.check.properties :as prop]))
+            [clojure.test.check.properties #?@(:cljs [:include-macros true])]
+            [com.gfredericks.test.chuck.generators #?@(:cljs [:include-macros true])]))
 
 ;; This namespace goes to a heck of a lot of effort just to get sane
 ;; args reported when a property fails. It semiduplicates syntactic
@@ -71,3 +72,17 @@
   (->> (partition 2 clauses)
        (mapcat (fn [[left right]] (for-bindings-in-clause left right)))
        (distinct)))
+
+(defmacro for-all
+  "Alternative version of clojure.test.check.properties/for-all where
+  the binding forms are interpreted as per
+  com.gfredericks.test.chuck.generators/for."
+  [bindings expr]
+  (let [bound-names (for-bindings bindings)
+        quoted-names (map #(list 'quote %) bound-names)]
+    `(clojure.test.check.properties/for-all [{:syms [~@bound-names]}
+                    (com.gfredericks.test.chuck.generators/for ~bindings
+                      (with-meta
+                        ~(zipmap quoted-names bound-names)
+                        {::for-all-bindings-map true}))]
+       ~expr)))

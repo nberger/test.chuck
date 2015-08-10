@@ -4,7 +4,7 @@
                      [com.gfredericks.test.chuck.clojure-test :refer [checking]])
      :cljs (:require [cljs.test :as test :refer [test-var *current-env*]
                       :refer-macros [is testing deftest]]
-                     [cljs.test.check.generators :as gen]
+                     [clojure.test.check.generators :as gen]
                      [com.gfredericks.test.chuck.cljs-test :refer-macros [checking]])))
 
 (deftest this-test-should-crash

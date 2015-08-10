@@ -8,7 +8,7 @@
                  [instaparse "1.3.6"]]
   :deploy-repositories [["releases" :clojars]]
   :profiles {:dev {:dependencies
-                   [[org.clojure/test.check "0.7.0"]]}}
+                   [[org.clojure/test.check "0.8.0-RC3"]]}}
   :plugins [[lein-cljsbuild "1.0.6"]
             [lein-doo "0.1.4-SNAPSHOT"]]
 
