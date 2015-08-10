@@ -1,11 +1,9 @@
 (ns com.gfredericks.test.chuck.exception-handling-test
-  #?(:clj  (:require [clojure.test :refer :all]
-                     [clojure.test.check.generators :as gen]
-                     [com.gfredericks.test.chuck.clojure-test :refer [checking]])
-     :cljs (:require [cljs.test :as test :refer [test-var *current-env*]
-                      :refer-macros [is testing deftest]]
-                     [clojure.test.check.generators :as gen]
-                     [com.gfredericks.test.chuck.cljs-test :refer-macros [checking]])))
+  (:require #?(:clj  [clojure.test :refer :all]
+               :cljs [cljs.test :as test :refer [test-var *current-env*]
+                      :refer-macros [is testing deftest]])
+            [clojure.test.check.generators :as gen]
+            [com.gfredericks.test.chuck.clojure-test #?(:clj :refer :cljs :refer-macros) [checking]]))
 
 (deftest this-test-should-crash
   (checking "you can divide four by numbers" 100 [i gen/pos-int]

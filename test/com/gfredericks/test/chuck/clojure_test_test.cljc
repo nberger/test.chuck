@@ -3,8 +3,7 @@
             #?(:cljs [cljs.test :refer-macros [deftest is]])
             [clojure.test.check :refer [quick-check]]
             [clojure.test.check.generators :as gen]
-            #?(:clj [com.gfredericks.test.chuck.clojure-test :refer [checking for-all]])
-            #?(:cljs [com.gfredericks.test.chuck.cljs-test :refer-macros [checking for-all]])))
+            [com.gfredericks.test.chuck.clojure-test #?(:clj :refer :cljs :refer-macros) [checking for-all]]))
 
 (deftest integer-facts
   (checking "positive" 100 [i gen/s-pos-int]
