@@ -8,7 +8,6 @@
 (deftest integer-facts
   (checking "positive" 100 [i gen/s-pos-int]
     (is (> i 0)))
-
   (checking "negative" 100 [i gen/s-neg-int]
     (is (< i 0))))
 

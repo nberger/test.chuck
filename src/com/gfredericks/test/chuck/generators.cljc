@@ -122,10 +122,10 @@
                     [lettings bindings values]))
                 k1' (apply vector k1 bindings)
                 v1' `(~'clojure.test.check.generators/fmap (fn [arg#]
-                                   (let [~k1 arg#
-                                         ~@lettings]
-                                     [arg# ~@values]))
-                         ~v1)]
+                                 (let [~k1 arg#
+                                       ~@lettings]
+                                   [arg# ~@values]))
+                               ~v1)]
             `(for [~k1' ~v1' ~@even-more] ~expr))
 
           (= k2 :when)
