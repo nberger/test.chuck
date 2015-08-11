@@ -28,6 +28,16 @@
   [then else]
   (if (cljs-env? &env) then else))
 
+(defmacro capture-reports [& body]
+  `(let [reports# (atom [])]
+     (if-cljs
+       (binding [*chuck-captured-reports* reports#
+                 cljs.test/*current-env* (cljs.test/empty-env ::chuck-capture)]
+         ~@body)
+       (binding [clojure.test/report #(swap! reports# conj %)]
+         ~@body))
+     @reports#))
+
 (defmacro checking
   "A macro intended to replace the testing macro in clojure.test with a
   generative form. To make (testing \"doubling\" (is (= (* 2 2) (+ 2 2))))
@@ -70,18 +80,7 @@
   clojure.test-style assertions (i.e., clojure.test/is) rather than
   the truthiness of the body expression."
   [bindings & body]
-  `(if-cljs
-
-   (clojure.test.check.properties/for-all
+  `(clojure.test.check.properties/for-all
      ~bindings
-     (let [reports# (atom [])]
-       (binding [*chuck-captured-reports* reports#
-                 cljs.test/*current-env* (cljs.test/empty-env ::chuck-capture)]
-         ~@body)
-       (pass? @reports#)))
-
-   (prop/for-all ~bindings
-     (let [reports# (atom [])]
-       (binding [clojure.test/report #(swap! reports# conj %)]
-         ~@body)
-       (pass? @reports#)))))
+     (let [reports# (capture-reports ~@body)]
+       (pass? reports#))))
