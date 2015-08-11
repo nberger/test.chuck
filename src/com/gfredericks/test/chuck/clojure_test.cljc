@@ -54,24 +54,19 @@
          (clojure.test.check/quick-check
            ~tests
            (clojure.test.check.properties/for-all ~bindings
-             (let [reports# (atom [])]
-               (binding [*chuck-captured-reports* reports#
-                         cljs.test/*current-env* (cljs.test/empty-env ::chuck-capture)]
-                 ~@body)
-               (swap! final-reports# save-to-final-reports @reports#)
-               (pass? @reports#)))))
+             (let [reports# (capture-reports ~@body)]
+               (swap! final-reports# save-to-final-reports reports#)
+               (pass? reports#)))))
        (doseq [r# @final-reports#]
-         (cljs.test/report r#)))) 
+         (cljs.test/report r#))))
 
    (clojure.test/testing ~name
      (let [final-reports# (atom [])]
        (report-when-failing (tc/quick-check ~tests
                               (prop/for-all ~bindings
-                                (let [reports# (atom [])]
-                                  (binding [clojure.test/report #(swap! reports# conj %)]
-                                    ~@body)
-                                  (swap! final-reports# save-to-final-reports @reports#)
-                                  (pass? @reports#)))))
+                                (let [reports# (capture-reports ~@body)]
+                                  (swap! final-reports# save-to-final-reports reports#)
+                                  (pass? reports#)))))
        (doseq [r# @final-reports#]
          (clojure.test/report r#))))))
 
