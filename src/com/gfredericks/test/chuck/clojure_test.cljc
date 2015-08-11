@@ -38,6 +38,16 @@
          ~@body))
      @reports#))
 
+(defmacro qc-and-report-when-failing
+  [final-reports tests bindings & body]
+  `(report-when-failing
+    (clojure.test.check/quick-check
+      ~tests
+      (clojure.test.check.properties/for-all ~bindings
+        (let [reports# (capture-reports ~@body)]
+          (swap! ~final-reports save-to-final-reports reports#)
+          (pass? reports#))))))
+
 (defmacro checking
   "A macro intended to replace the testing macro in clojure.test with a
   generative form. To make (testing \"doubling\" (is (= (* 2 2) (+ 2 2))))
@@ -50,23 +60,13 @@
 
    (cljs.test/testing ~name
      (let [final-reports# (atom [])]
-       (report-when-failing
-         (clojure.test.check/quick-check
-           ~tests
-           (clojure.test.check.properties/for-all ~bindings
-             (let [reports# (capture-reports ~@body)]
-               (swap! final-reports# save-to-final-reports reports#)
-               (pass? reports#)))))
+       (qc-and-report-when-failing final-reports# ~tests ~bindings ~@body)
        (doseq [r# @final-reports#]
          (cljs.test/report r#))))
 
    (clojure.test/testing ~name
      (let [final-reports# (atom [])]
-       (report-when-failing (tc/quick-check ~tests
-                              (prop/for-all ~bindings
-                                (let [reports# (capture-reports ~@body)]
-                                  (swap! final-reports# save-to-final-reports reports#)
-                                  (pass? reports#)))))
+       (qc-and-report-when-failing final-reports# ~tests ~bindings ~@body)
        (doseq [r# @final-reports#]
          (clojure.test/report r#))))))
 
