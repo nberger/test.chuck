@@ -67,7 +67,7 @@
         :else (throw (ex-info "Unrecognized binding expression in test.chuck.properties/for-all!"
                               {:expr left}))))
 
-(defn for-bindings
+(defn ^:private for-bindings
   [clauses]
   (->> (partition 2 clauses)
        (mapcat (fn [[left right]] (for-bindings-in-clause left right)))
