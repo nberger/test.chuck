@@ -3,11 +3,10 @@
   (:refer-clojure :exclude [double for partition])
   #?(:cljs (:require-macros [com.gfredericks.test.chuck.generators :refer [for]]))
   (:require [clojure.test.check.generators :as gen]
+            [#?(:clj clojure.core :cljs cljs.core) :as core]
             [#?(:clj clj-time.core :cljs cljs-time.core) :as ct]
             [#?(:clj clj-time.coerce :cljs cljs-time.coerce) :as ctc]
-            #?@(:clj  [[clojure.core :as core]
-                       [com.gfredericks.test.chuck.regexes :as regexes]]
-                :cljs [[cljs.core :as core]])))
+            #?(:clj [com.gfredericks.test.chuck.regexes :as regexes])))
 
 ;; Hoping this will be in test.check proper:
 ;; http://dev.clojure.org/jira/browse/TCHECK-15
