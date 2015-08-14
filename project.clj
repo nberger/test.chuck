@@ -6,6 +6,7 @@
   :dependencies [[org.clojure/clojure "1.7.0" :scope "provided"]
                  [org.clojure/clojurescript "1.7.48" :scope "provided"]
                  [org.clojure/test.check "0.8.0-RC3"]
+                 [clj-time "0.10.0"]
                  [instaparse "1.3.6"]]
   :deploy-repositories [["releases" :clojars]]
   :plugins [[lein-cljsbuild "1.0.6"]
