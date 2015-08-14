@@ -222,8 +222,7 @@
 (defn ^:private scalb
   [x exp]
   #?(:clj  (Math/scalb x exp)
-     :cljs (do
-             (* x (.pow js/Math 2 exp)))))
+     :cljs (* x (.pow js/Math 2 exp))))
 
 (def double
   "Generates a Double, which can include Infinity and -Infinity
