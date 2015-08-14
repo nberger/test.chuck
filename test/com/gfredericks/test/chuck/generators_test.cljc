@@ -2,8 +2,8 @@
   (:require [clojure.test.check.clojure-test
              #?(:clj :refer :cljs :refer-macros) [defspec]]
             [clojure.test.check.generators :as gen]
-            #?(:clj [clj-time.core :as ct])
-            #?(:clj [clj-time.coerce :as ctc])
+            [#?(:clj clj-time.core :cljs cljs-time.core) :as ct]
+            [#?(:clj clj-time.coerce :cljs cljs-time.coerce) :as ctc]
             [clojure.test.check.properties :as prop]
             [com.gfredericks.test.chuck.generators :as gen'
              #?@(:cljs [:include-macros true])]))
@@ -115,11 +115,10 @@
                 %)
             sm)))
 
-#?(:clj
 (defspec gen-datetime-spec 100000
   (prop/for-all [dt (gen'/gen-datetime {:offset-min 0
                                         :offset-max 100
                                         :offset-fns [ct/millis ct/seconds ct/minutes ct/hours ct/days ct/months]})]
                 (ct/within? (ct/date-time 2000)
                             (ct/date-time 2009)
-                            dt))))
+                            dt)))

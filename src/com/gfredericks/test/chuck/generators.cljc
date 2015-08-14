@@ -3,10 +3,10 @@
   (:refer-clojure :exclude [double for partition])
   #?(:cljs (:require-macros [com.gfredericks.test.chuck.generators :refer [for]]))
   (:require [clojure.test.check.generators :as gen]
+            [#?(:clj clj-time.core :cljs cljs-time.core) :as ct]
+            [#?(:clj clj-time.coerce :cljs cljs-time.coerce) :as ctc]
             #?@(:clj  [[clojure.core :as core]
-                       [com.gfredericks.test.chuck.regexes :as regexes]
-                       [clj-time.core :as ct]
-                       [clj-time.coerce :as ctc]]
+                       [com.gfredericks.test.chuck.regexes :as regexes]]
                 :cljs [[cljs.core :as core]])))
 
 ;; Hoping this will be in test.check proper:
@@ -264,13 +264,12 @@
               (select-keys m ks))
             (subsequence (keys m))))
 
-#?(:clj (def valid-offset-fns [ct/millis ct/seconds ct/minutes ct/hours ct/days ct/months ct/years]))
+(def valid-offset-fns [ct/millis ct/seconds ct/minutes ct/hours ct/days ct/months ct/years])
 
-#?(:clj (def ^:private valid-offset-fn? (set valid-offset-fns)))
+(def ^:private valid-offset-fn? (set valid-offset-fns))
 
-#?(:clj (def ^:private yr-2000 (ct/date-time 2000)))
+(def ^:private yr-2000 (ct/date-time 2000))
 
-#?(:clj
 (defn gen-datetime
   "Generates datetime within given range and format.
 
@@ -317,4 +316,4 @@
                    (ct/plus base-datetime)))
              (gen/tuple (gen/elements offset-fns)
                         (bounded-int offset-min
-                                     offset-max))))))
+                                     offset-max)))))
