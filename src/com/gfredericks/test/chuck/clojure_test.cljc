@@ -3,7 +3,7 @@
             [clojure.test.check.properties :as prop
              #?@(:cljs [:include-macros true])]
             [com.gfredericks.test.chuck.clojure-test.impl
-             :refer [pass? report-when-failing save-to-final-reports]]))
+             :refer [pass? report-exception save-to-final-reports]]))
 
 (def ^:dynamic *chuck-captured-reports*)
 
@@ -38,9 +38,9 @@
          ~@body))
      @reports#))
 
-(defmacro qc-and-report-when-failing
+(defmacro qc-and-report-exception
   [final-reports tests bindings & body]
-  `(report-when-failing
+  `(report-exception
     (clojure.test.check/quick-check
       ~tests
       (clojure.test.check.properties/for-all ~bindings
@@ -60,13 +60,13 @@
 
    (cljs.test/testing ~name
      (let [final-reports# (atom [])]
-       (qc-and-report-when-failing final-reports# ~tests ~bindings ~@body)
+       (qc-and-report-exception final-reports# ~tests ~bindings ~@body)
        (doseq [r# @final-reports#]
          (cljs.test/report r#))))
 
    (clojure.test/testing ~name
      (let [final-reports# (atom [])]
-       (qc-and-report-when-failing final-reports# ~tests ~bindings ~@body)
+       (qc-and-report-exception final-reports# ~tests ~bindings ~@body)
        (doseq [r# @final-reports#]
          (clojure.test/report r#))))))
 

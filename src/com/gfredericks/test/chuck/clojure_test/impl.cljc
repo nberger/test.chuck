@@ -8,14 +8,14 @@
 ;; I think there might be plans for test.check to abstract this logic
 ;; into a protocol or something, so I'm not too bothered by the
 ;; copypasta for now.
-(defn ^:private not-falsey-or-exception?
+(defn ^:private not-exception?
   [value]
-  (and value (not (instance? #?(:clj  Throwable
-                                :cljs js/Error)
-                             value))))
+  (not (instance? #?(:clj  Throwable
+                     :cljs js/Error)
+                  value)))
 
-(defn report-when-failing [result]
-  (is (not-falsey-or-exception? (:result result)) result))
+(defn report-exception [result]
+  (is (not-exception? (:result result)) result))
 
 (defn pass? [reports]
   (every? #(= (:type %) :pass) reports))

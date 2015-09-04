@@ -5,7 +5,7 @@
             [clojure.test.check.generators :as gen]
             [com.gfredericks.test.chuck.clojure-test #?(:clj :refer :cljs :refer-macros) [checking]]))
 
-(deftest this-test-should-crash
+(deftest this-test-should-crash-and-be-caught
   (checking "you can divide four by numbers" 100 [i gen/pos-int]
     ;; going for uncaught-error-not-in-assertion here
     (let [n #?(:clj  (/ 4 i)
@@ -21,12 +21,12 @@
            (binding [; need to keep the failure of this-is-supposed-to-fail from
                      ; affecting the clojure.test.check test run
                      *report-counters* (ref *initial-report-counters*)]
-             (capture-test-var #'this-test-should-crash)
+             (capture-test-var #'this-test-should-crash-and-be-caught)
              @*report-counters*)
 
            :cljs
            (binding [*current-env* (test/empty-env)]
-             (capture-test-var #'this-test-should-crash)
+             (capture-test-var #'this-test-should-crash-and-be-caught)
              (:report-counters *current-env*)))]
     ;; should be reported as an error, but it's being reported as :fail :/
     (is (= {:pass 0
