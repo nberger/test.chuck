@@ -81,7 +81,7 @@
               (let [pairs (core/partition 2 v1)
                     names (map first pairs)
                     gens (map second pairs)]
-                `(for [[~@names] (~'clojure.test.check.generators/tuple ~@gens)
+                `(for [[~@names] (gen/tuple ~@gens)
                        ~@more]
                    ~expr)))
 
@@ -89,7 +89,7 @@
           ;; special case to avoid extra call to fmap
           (if (and (symbol? k1) (= k1 expr))
             v1
-            `(~'clojure.test.check.generators/fmap (fn [~k1] ~expr) ~v1))
+            `(gen/fmap (fn [~k1] ~expr) ~v1))
 
           (= k2 :let)
           ;; This part is complex because we need to watch out for
@@ -121,7 +121,7 @@
                                xs)))
                     [lettings bindings values]))
                 k1' (apply vector k1 bindings)
-                v1' `(~'clojure.test.check.generators/fmap (fn [arg#]
+                v1' `(gen/fmap (fn [arg#]
                                  (let [~k1 arg#
                                        ~@lettings]
                                    [arg# ~@values]))
@@ -132,11 +132,11 @@
           (let [max-tries-meta (-> v2 meta :max-tries)
                 max-tries-arg (if max-tries-meta
                                 [max-tries-meta])
-                v1' `(~'clojure.test.check.generators/such-that (fn [~k1] ~v2) ~v1 ~@max-tries-arg)]
+                v1' `(gen/such-that (fn [~k1] ~v2) ~v1 ~@max-tries-arg)]
             `(for [~k1 ~v1' ~@even-more] ~expr))
 
           ((some-fn symbol? vector? map? #{:parallel}) k2)
-          `(~'clojure.test.check.generators/bind ~v1 (fn [~k1] (for ~more ~expr)))
+          `(gen/bind ~v1 (fn [~k1] (for ~more ~expr)))
 
           :else
           (throw (ex-info "Unsupported binding form in gen/for!" {:form k2})))))
