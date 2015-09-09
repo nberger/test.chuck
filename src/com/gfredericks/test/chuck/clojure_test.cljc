@@ -54,14 +54,21 @@
   [then else]
   (if (cljs-env? &env) then else))
 
-(defmacro capture-reports [& body]
+(defn capture-reports*
+  [reports-atom f]
+  #?(:clj
+     (binding [clojure.test/report #(swap! reports-atom conj %)]
+       (f))
+
+     :cljs
+     (binding [*chuck-captured-reports* reports-atom
+               cljs.test/*current-env* (cljs.test/empty-env ::chuck-capture)]
+       (f))))
+
+(defmacro capture-reports
+  [& body]
   `(let [reports# (atom [])]
-     (if-cljs
-       (binding [*chuck-captured-reports* reports#
-                 cljs.test/*current-env* (cljs.test/empty-env ::chuck-capture)]
-         ~@body)
-       (binding [clojure.test/report #(swap! reports# conj %)]
-         ~@body))
+     (capture-reports* reports# (fn [] ~@body))
      @reports#))
 
 (defmacro qc-and-report-exception
