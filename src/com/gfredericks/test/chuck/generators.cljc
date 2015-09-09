@@ -10,7 +10,6 @@
 
 ;; Hoping this will be in test.check proper:
 ;; http://dev.clojure.org/jira/browse/TCHECK-15
-#?(:clj
 (defmacro for
   "Like clojure.core/for, but builds up a generator using bind, fmap,
   and such-that. The right half of each binding pair is a generator,
@@ -140,7 +139,7 @@
           `(~'clojure.test.check.generators/bind ~v1 (fn [~k1] (for ~more ~expr)))
 
           :else
-          (throw (ex-info "Unsupported binding form in gen/for!" {:form k2}))))))
+          (throw (ex-info "Unsupported binding form in gen/for!" {:form k2})))))
 
 (defn subsequence
   "Given a collection, generates \"subsequences\" which are sequences
