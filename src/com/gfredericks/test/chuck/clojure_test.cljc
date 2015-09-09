@@ -43,17 +43,6 @@
   [m]
   (swap! *chuck-captured-reports* conj m)))
 
-(defn- cljs-env?
-  "Take the &env from a macro, and tell whether we are expanding into cljs."
-  [env]
-  (boolean (:ns env)))
-
-(defmacro if-cljs
-  "Return then if we are generating cljs code and else for Clojure code.
-   https://groups.google.com/d/msg/clojurescript/iBY5HaQda4A/w1lAQi9_AwsJ"
-  [then else]
-  (if (cljs-env? &env) then else))
-
 (defn capture-reports*
   [reports-atom f]
   #?(:clj
@@ -81,6 +70,14 @@
           (swap! ~final-reports save-to-final-reports reports#)
           (pass? reports#))))))
 
+(defn -testing
+  [name func]
+  (#?(:clj clojure.test/testing :cljs cljs.test/testing) name (func)))
+
+(defn -report
+  [reports]
+  (#?(:clj clojure.test/report :cljs cljs.test/report) reports))
+
 (defmacro checking
   "A macro intended to replace the testing macro in clojure.test with a
   generative form. To make (testing \"doubling\" (is (= (* 2 2) (+ 2 2))))
@@ -89,19 +86,12 @@
 
   For more details on this code, see http://blog.colinwilliams.name/blog/2015/01/26/alternative-clojure-dot-test-integration-with-test-dot-check/"
   [name tests bindings & body]
-  `(if-cljs
-
-   (cljs.test/testing ~name
-     (let [final-reports# (atom [])]
-       (qc-and-report-exception final-reports# ~tests ~bindings ~@body)
-       (doseq [r# @final-reports#]
-         (cljs.test/report r#))))
-
-   (clojure.test/testing ~name
-     (let [final-reports# (atom [])]
-       (qc-and-report-exception final-reports# ~tests ~bindings ~@body)
-       (doseq [r# @final-reports#]
-         (clojure.test/report r#))))))
+  `(-testing ~name
+    (fn []
+      (let [final-reports# (atom [])]
+        (qc-and-report-exception final-reports# ~tests ~bindings ~@body)
+        (doseq [r# @final-reports#]
+          (-report r#))))))
 
 (defmacro for-all
   "An alternative to clojure.test.check.properties/for-all that uses
