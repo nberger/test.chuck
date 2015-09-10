@@ -18,7 +18,7 @@
                (tc/quick-check 100
                  (prop'/for-all [x gen/int]
                    #?(:clj  (/ 4 0)
-                      :cljs (js/Error. "Oops"))))))))
+                      :cljs (throw (js/Error. "Oops")))))))))
 
 (deftest reported-args-test
   (let [p (prop'/for-all [x gen/nat]
