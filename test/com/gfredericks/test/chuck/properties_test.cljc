@@ -16,8 +16,10 @@
                  :cljs js/Error)
               (:result
                (tc/quick-check 100
-                 (prop'/for-all [s (gen/one-of [gen/string (gen/return nil)])]
-                   (subs s 1 2)))))))
+                 (prop'/for-all [i gen/int]
+                   (case i ; will throw when not in #{0 1}
+                     0 :zero
+                     1 :one)))))))
 
 (deftest reported-args-test
   (let [p (prop'/for-all [x gen/nat]

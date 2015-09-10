@@ -6,10 +6,11 @@
             [com.gfredericks.test.chuck.clojure-test #?(:clj :refer :cljs :refer-macros) [checking]]))
 
 (deftest this-test-should-crash-and-be-caught
-  (checking "subs on any string or nil" 100 [s (gen/one-of [gen/string (gen/return nil)])]
+  (checking "an int is zero or one" 100 [i gen/int]
     ;; going for uncaught-error-not-in-assertion here
-    (let [res (subs s 1 2)]
-      (is res))))
+    (case i ; will throw when not in #{0 1}
+      0 :zero
+      1 :one)))
 
 (defn capture-test-var [v]
   (with-out-str (test-var v)))
