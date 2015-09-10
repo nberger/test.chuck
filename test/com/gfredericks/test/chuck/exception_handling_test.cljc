@@ -6,11 +6,10 @@
             [com.gfredericks.test.chuck.clojure-test #?(:clj :refer :cljs :refer-macros) [checking]]))
 
 (deftest this-test-should-crash-and-be-caught
-  (checking "you can divide four by numbers" 100 [i gen/pos-int]
+  (checking "subs on any string or nil" 100 [s (gen/one-of [gen/string (gen/return nil)])]
     ;; going for uncaught-error-not-in-assertion here
-    (let [n #?(:clj  (/ 4 i)
-               :cljs (throw (js/Error. "Oops!")))]
-      (is n))))
+    (let [res (subs s 1 2)]
+      (is res))))
 
 (defn capture-test-var [v]
   (with-out-str (test-var v)))
