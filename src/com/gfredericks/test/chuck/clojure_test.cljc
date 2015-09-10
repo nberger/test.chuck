@@ -63,9 +63,9 @@
 (defmacro qc-and-report-exception
   [final-reports tests bindings & body]
   `(report-exception
-    (clojure.test.check/quick-check
+    (tc/quick-check
       ~tests
-      (clojure.test.check.properties/for-all ~bindings
+      (prop/for-all ~bindings
         (let [reports# (capture-reports ~@body)]
           (swap! ~final-reports save-to-final-reports reports#)
           (pass? reports#))))))
@@ -98,7 +98,7 @@
   clojure.test-style assertions (i.e., clojure.test/is) rather than
   the truthiness of the body expression."
   [bindings & body]
-  `(clojure.test.check.properties/for-all
+  `(prop/for-all
      ~bindings
      (let [reports# (capture-reports ~@body)]
        (pass? reports#))))
