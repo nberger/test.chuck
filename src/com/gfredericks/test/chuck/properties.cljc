@@ -3,7 +3,7 @@
   (:require [clojure.set :as sets]
             [clojure.test.check.properties :as prop
              #?@(:cljs [:include-macros true])]
-            [com.gfredericks.test.chuck.generators :as gen
+            [com.gfredericks.test.chuck.generators :as gen'
              #?@(:cljs [:include-macros true])]))
 
 ;; This namespace goes to a heck of a lot of effort just to get sane
@@ -83,7 +83,7 @@
   (let [bound-names (for-bindings bindings)
         quoted-names (map #(list 'quote %) bound-names)]
     `(prop/for-all [{:syms [~@bound-names]}
-                    (gen/for ~bindings
+                    (gen'/for ~bindings
                       (with-meta
                         ~(zipmap quoted-names bound-names)
                         {::for-all-bindings-map true}))]
