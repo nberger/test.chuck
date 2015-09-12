@@ -2,8 +2,8 @@
   (:require [clojure.test.check :as tc]
             [clojure.test.check.properties :as prop
              #?@(:cljs [:include-macros true])]
-            #?(:clj  [clojure.test :refer [is]]
-               :cljs [cljs.test :refer-macros [is]])))
+            #?(:clj  [clojure.test :as ct :refer [is]]
+               :cljs [cljs.test :as ct :refer-macros [is]])))
 
 ;; copied from clojure.test.check, which privatized the function in
 ;; recent versions.
@@ -34,19 +34,19 @@
 (def ^:dynamic *chuck-captured-reports*)
 
 #?(:cljs
-(defmethod cljs.test/report [::chuck-capture :fail]
+(defmethod ct/report [::chuck-capture :fail]
   [m]
   (swap! *chuck-captured-reports* conj m)))
 
 #?(:cljs
-(defmethod cljs.test/report [::chuck-capture :pass]
+(defmethod ct/report [::chuck-capture :pass]
   [m]
   (swap! *chuck-captured-reports* conj m)))
 
 (defn capture-reports*
   [reports-atom f]
   #?(:clj
-     (binding [clojure.test/report #(swap! reports-atom conj %)]
+     (binding [ct/report #(swap! reports-atom conj %)]
        (f))
 
      :cljs
@@ -76,7 +76,7 @@
 
 (defn -report
   [reports]
-  (#?(:clj clojure.test/report :cljs cljs.test/report) reports))
+  (ct/report reports))
 
 (defmacro checking
   "A macro intended to replace the testing macro in clojure.test with a
